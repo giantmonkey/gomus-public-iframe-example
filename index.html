@@ -17,8 +17,6 @@
     body { background: #1AB394;}
   </style>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.8/iframeResizer.min.js" crossorigin="anonymous"></script>
-
 </head>
 
 <body>
@@ -32,42 +30,43 @@
     }
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
+      results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
-  // get the go url
+
+  var el = document.getElementById('go_marker');
   var go_url = getParameterByName('go_url');
 
-  // create the iframe in pure javascript
-  var ifrm = document.createElement('iframe');
-  // assign an id
-  ifrm.setAttribute('id', 'go_ifrm');
+  if ((typeof(el) != 'undefined' && el != null) && (typeof(go_url) != 'undefined' && go_url != null)) {
+    // get the go url
+    var go_url_arr = go_url.split("/");
+    var go_url_base = go_url_arr[0] + "//" + go_url_arr[2]
 
-  // insert into exisiting element
-  var el = document.getElementById('go_marker');
-  el.appendChild(ifrm);
+    // create the iframe in pure javascript
+    var ifrm = document.createElement('iframe');
 
-  // assign url
-  ifrm.setAttribute('src', go_url);
+    ifrm.setAttribute('id', 'go_ifrm');
+    ifrm.setAttribute('csp', "\"object-src 'none'\"");
+    ifrm.setAttribute('allow', "camera "+go_url_base+"; microphone "+go_url_base);
 
-  // set frameborder
-  ifrm.setAttribute('frameborder', 'none');
+    // insert into exisiting element
+    el.appendChild(ifrm);
 
-  // set allowtransparency
-  ifrm.setAttribute('allowtransparency', 'true');
+    // assign url
+    ifrm.setAttribute('src', go_url);
 
-  // assign width
-  ifrm.setAttribute('width', '100%');
+    // set frameborder
+    ifrm.setAttribute('frameborder', 'none');
 
-  // assign height
-  // ifrm.setAttribute('height', '500');
-  // or
-  // use iframe resizer
-  // see https://github.com/davidjbradshaw/iframe-resizer for details
-  iFrameResize();
+    // set allowtransparency
+    ifrm.setAttribute('allowtransparency', 'true');
 
+    // assign width
+    ifrm.setAttribute('width', '100%');
+    ifrm.setAttribute('height', '800');
+  }
 </script>
 </html>
