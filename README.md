@@ -1,7 +1,9 @@
 # gomus-public-iframe-example
+
 Example of handling go~mus public routes
 
 ### Schema
+
 ![go_url](https://raw.githubusercontent.com/giantmonkey/gomus-public-iframe-example/master/go_url.png)
 
 ### Code
@@ -59,5 +61,4 @@ Add an iframe container div into your page:
 
 ```html
   <div id="go_marker"></div>
-
 ```
