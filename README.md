@@ -46,12 +46,6 @@ Include the following code into your page:
 	// assign width
 	ifrm.setAttribute('width', '100%');
 	
-	// assign height
-	// ifrm.setAttribute('height', '500');
-	// or
-	// use iframe resizer
-	// see https://github.com/davidjbradshaw/iframe-resizer for details
-	iFrameResize();
 
 ```
 
