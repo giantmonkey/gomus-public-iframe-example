@@ -12,15 +12,26 @@ Include the following code into your page:
 
 ```javascript
   function getParameterByName(name, url) {
-    if (!url) {
-      url = window.location.href;
-    }
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+      if (!url) {
+          url = window.location.href;
+      }
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+      var results = regex.exec(url);
+  
+      if (!results) return null;
+      if (!results[2]) return '';
+  
+      var resultUrl = decodeURIComponent(results[2].replace(/\+/g, " "));
+      
+      var urlObject = new URL(resultUrl);
+      var domainRegex = new RegExp("^([a-z0-9-]+\\.)?gomus\\.(de|cloud|lu|at)$");
+  
+      if (!domainRegex.test(urlObject.hostname)) {
+          return null; // or an appropriate error value.
+      }
+      
+      return resultUrl;
   }
 
 
