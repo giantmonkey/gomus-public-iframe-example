@@ -29,42 +29,52 @@
       url = window.location.href;
     }
     name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-  }
+    var pattern = "[?&]" + name + "(=([^&#]*)|&|#|$)";
+    var regex = new RegExp(pattern);
+    var results = regex.exec(url);
 
+    if (!results || !results[2]) return null;
+
+    var raw = results[2].replace(/\+/g, " ");
+    var resultUrl = decodeURIComponent(raw);
+
+    // only https URLs on a go~mus host may enter the iframe;
+    // a hostname check alone lets javascript://host/%0a... through
+    var urlObject;
+    try {
+      urlObject = new URL(resultUrl);
+    } catch (e) {
+      return null;
+    }
+    var goDomain =
+      /^([a-z0-9-]+\.)?gomus\.(de|cloud|lu|at)$/;
+
+    if (urlObject.protocol !== "https:" ||
+        !goDomain.test(urlObject.hostname)) {
+      return null;
+    }
+
+    return resultUrl;
+  }
 
   var el = document.getElementById('go_marker');
   var go_url = getParameterByName('go_url');
 
-  if ((typeof(el) != 'undefined' && el != null) && (typeof(go_url) != 'undefined' && go_url != null)) {
-    // get the go url
+  if (el != null && go_url != null) {
     var go_url_arr = go_url.split("/");
-    var go_url_base = go_url_arr[0] + "//" + go_url_arr[2]
+    var go_url_base = go_url_arr[0] + "//" +
+      go_url_arr[2];
 
-    // create the iframe in pure javascript
     var ifrm = document.createElement('iframe');
-
     ifrm.setAttribute('id', 'go_ifrm');
     ifrm.setAttribute('csp', "\"object-src 'none'\"");
-    ifrm.setAttribute('allow', "camera "+go_url_base+"; microphone "+go_url_base);
-
-    // insert into exisiting element
+    var allow = "camera " + go_url_base +
+      "; microphone " + go_url_base;
+    ifrm.setAttribute('allow', allow);
     el.appendChild(ifrm);
-
-    // assign url
     ifrm.setAttribute('src', go_url);
-
-    // set frameborder
     ifrm.setAttribute('frameborder', 'none');
-
-    // set allowtransparency
     ifrm.setAttribute('allowtransparency', 'true');
-
-    // assign width
     ifrm.setAttribute('width', '100%');
     ifrm.setAttribute('height', '800');
   }
